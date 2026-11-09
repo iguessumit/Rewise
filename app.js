@@ -80,6 +80,8 @@
         var swOk = 'serviceWorker' in navigator;
         add('Works offline', swOk && RQ.swReg && RQ.swReg.active ? 'pass' : 'warn',
           !swOk ? 'Not available in this browser or address' : (RQ.swReg && RQ.swReg.active ? 'Offline file is active' : 'Not active yet. Close and reopen the app once.'));
+        var photoOk = typeof window.createImageBitmap === 'function' && !!document.createElement('canvas').toBlob;
+        add('Photo handling', photoOk ? 'pass' : 'warn', photoOk ? 'Can shrink photos before saving' : 'Photos may be saved at full size');
         add('Vibration', navigator.vibrate ? 'pass' : 'warn', navigator.vibrate ? 'Supported' : 'Not supported here');
         var standalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
         add('Installed on home screen', standalone ? 'pass' : 'warn', standalone ? 'Yes' : 'Not yet (optional): Chrome menu > Add to Home screen');
@@ -94,16 +96,21 @@
   function renderHome(root) {
     var resultBox = h('div', { class: 'glass pad', hidden: true });
     var chapterCount = h('span', { class: 'muted', text: '' });
+    var noteCount = h('span', { class: 'muted', text: '' });
+    RQ.notes.all().then(function (r) { noteCount.textContent = r.length === 1 ? '1 note saved' : r.length + ' notes saved'; }).catch(function () {});
     RQ.chapters.all().then(function (r) { chapterCount.textContent = r.length + ' chapters'; }).catch(function () {});
 
     root.append.apply(root, [
       h('div', { class: 'head' },
-        h('div', { class: 'grow' }, h('h1', { text: 'Revise' }), h('div', { class: 'hint', text: 'Revision Quest - Part 1: foundation' })),
+        h('div', { class: 'grow' }, h('h1', { text: 'Revise' }), h('div', { class: 'hint', text: 'Revision Quest - Part 2: Log Notes' })),
         h('button', { class: 'round-btn', 'aria-label': 'Settings', onclick: function () { location.hash = '#settings'; } }, icon('gear', 22))),
       RQ.bootError ? h('div', { class: 'glass pad error' }, h('div', { class: 'strong', text: 'Storage problem' }), h('div', { class: 'hint', text: RQ.bootError.message || String(RQ.bootError) })) : null,
       h('div', { class: 'glass pad' },
-        h('div', { class: 'strong', text: 'Foundation is ready' }),
-        h('p', { class: 'hint', text: 'This part sets up phone storage, Settings, the chapter list and the update message. The real Revise screens arrive in the next parts.' })),
+        h('div', { class: 'strong', text: 'Foundation and Log Notes are ready' }),
+        h('p', { class: 'hint', text: 'You can now log notes (typed, pasted or photos) and they are saved on this phone. Questions and revision screens arrive in the next parts.' })),
+      h('button', { class: 'btn', onclick: function () { location.hash = '#lognotes'; } }, h('span', null, icon('pen', 18), ' Log Notes')),
+      h('button', { class: 'glass nav', onclick: function () { location.hash = '#notes'; } },
+        h('span', { class: 'nav-ic' }, icon('notes', 22)), h('span', { class: 'grow left' }, h('span', { class: 'strong', text: 'My notes' }), h('br'), noteCount), icon('chevron', 20)),
       h('button', { class: 'glass nav', onclick: function () { location.hash = '#chapters'; } },
         h('span', { class: 'nav-ic' }, icon('book', 22)), h('span', { class: 'grow left' }, h('span', { class: 'strong', text: 'Chapters' }), h('br'), chapterCount), icon('chevron', 20)),
       h('button', { class: 'glass nav', onclick: function () { location.hash = '#settings'; } },
@@ -124,14 +131,25 @@
   }
 
   /* ---------- Screen switching ---------- */
-  var routes = { home: renderHome, settings: function (r) { RQ.screens.settings(r); }, chapters: function (r) { RQ.screens.chapters(r); } };
+  var routes = {
+    home: renderHome,
+    settings: function (r) { RQ.screens.settings(r); },
+    chapters: function (r) { RQ.screens.chapters(r); },
+    lognotes: function (r) { RQ.screens.lognotes(r); },
+    saved: function (r, a) { RQ.screens.saved(r, a); },
+    notes: function (r) { RQ.screens.notes(r); },
+    note: function (r, a) { RQ.screens.note(r, a); }
+  };
   function route() {
-    var id = (location.hash || '#home').slice(1);
-    var fn = routes[id] || renderHome;
+    var parts = (location.hash || '#home').slice(1).split('/');
+    var fn = routes[parts[0]] || renderHome;
     var root = document.getElementById('app');
+    RQ.freeUrls();
+    document.querySelectorAll('.sheet,.backdrop,.lightbox').forEach(function (el) { el.remove(); });
+    document.body.style.overflow = '';
     root.replaceChildren();
     window.scrollTo(0, 0);
-    fn(root);
+    fn(root, parts.slice(1).join('/'));
   }
   window.addEventListener('hashchange', route);
 

@@ -35,7 +35,14 @@
     gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
     book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>',
     pulse: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
-    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>'
+    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+    camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
+    pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    x: '<path d="M18 6L6 18M6 6l12 12"/>',
+    chevdown: '<path d="M6 9l6 6 6-6"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    notes: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h8"/>'
   };
   function icon(name, size) {
     var s = document.createElementNS(NS, 'svg');
@@ -65,10 +72,15 @@
   function header(title, opts) {
     opts = opts || {};
     return h('div', { class: 'head' },
-      opts.noBack ? null : h('button', { class: 'round-btn', 'aria-label': 'Back', onclick: function () { location.hash = '#home'; } }, icon('back', 22)),
+      opts.noBack ? null : h('button', { class: 'round-btn', 'aria-label': 'Back', onclick: function () { location.hash = opts.back || '#home'; } }, icon('back', 22)),
       h('h1', { text: title }),
       opts.right || null);
   }
+
+  /* Photo links are tracked so they can be released when you leave a screen. */
+  var urls = [];
+  RQ.blobUrl = function (blob) { var u = URL.createObjectURL(blob); urls.push(u); return u; };
+  RQ.freeUrls = function () { urls.forEach(function (u) { URL.revokeObjectURL(u); }); urls = []; };
 
   RQ.h = h;
   RQ.icon = icon;

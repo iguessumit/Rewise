@@ -2,7 +2,7 @@
    The cache name uses the version in version.js, so a new version always replaces the old files. */
 importScripts('version.js');
 var CACHE = 'rq-' + self.APP_VERSION;
-var FILES = ['index.html', 'style.css', 'version.js', 'db.js', 'ui.js', 'settings.js', 'chapters-data.js', 'chapters.js', 'app.js',
+var FILES = ['index.html', 'style.css', 'version.js', 'db.js', 'ui.js', 'settings.js', 'chapters-data.js', 'chapters.js', 'notes.js', 'lognotes.js', 'notes-screen.js', 'app.js',
   'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png'];
 
 self.addEventListener('install', function (e) {
