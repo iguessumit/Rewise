@@ -4,27 +4,1219 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0B0B0D">
-<meta name="mobile-web-app-capable" content="yes">
 <title>Revision Quest</title>
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
-<link rel="stylesheet" href="style.css">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230B0B0D'/%3E%3Ccircle cx='32' cy='32' r='19' fill='none' stroke='%23E9D5A2' stroke-width='3.5'/%3E%3Cpath d='M23 33l6 6 12-14' fill='none' stroke='%23E9D5A2' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<style>
+/* style.css - graphite and liquid glass look; the accent colour comes from Settings (set in settings.js). */
+:root{--a:#E9D5A2;--a-soft:#F4E6BF;--a-deep:#DCC388;--a-rgb:233,213,162;--bg:#0B0B0D;--text:#F4F8FA;--muted:rgba(244,248,250,.72);--line:rgba(255,255,255,.17);--bad:#FF8A8A}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:'DM Sans',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;font-size:15px;line-height:1.4}
+body{background:radial-gradient(circle at 15% 8%,rgba(var(--a-rgb),.34),transparent 45%),radial-gradient(circle at 92% 50%,rgba(148,163,184,.22),transparent 50%),radial-gradient(circle at 18% 96%,rgba(var(--a-rgb),.14),transparent 45%),var(--bg);background-attachment:fixed}
+#app{max-width:480px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 22px) 18px calc(env(safe-area-inset-bottom,0px) + 90px);display:flex;flex-direction:column;gap:14px}
+[hidden]{display:none!important}
+h1{margin:0;font-size:24px;font-weight:700}
+button{font:inherit;color:inherit;cursor:pointer}
+.head{display:flex;align-items:center;gap:12px}.head h1{flex:1}
+.grow{flex:1}.left{text-align:left}.center{text-align:center;flex:1}.center-text{text-align:center}
+.strong{font-weight:700}.muted{color:var(--muted)}
+.hint{font-size:13px;color:var(--muted);margin:2px 0 0}
+p.hint{margin:10px 0 0}
+.label{font-size:12px;letter-spacing:1.2px;font-weight:700;color:var(--muted);margin:2px 2px 6px}
+.sec{display:flex;flex-direction:column}
+.glass{background:rgba(255,255,255,.08);backdrop-filter:blur(26px) saturate(170%);-webkit-backdrop-filter:blur(26px) saturate(170%);border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 10px 28px rgba(0,0,0,.35);border-radius:20px}
+.pad{padding:16px;display:flex;flex-direction:column;gap:10px}
+.pad.error{border-color:rgba(255,138,138,.6)}
+.line{display:flex;align-items:center;justify-content:space-between;gap:12px}.line.gap{padding:0 2px}
+.round-btn{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;padding:0;background:rgba(255,255,255,.08);backdrop-filter:blur(26px) saturate(170%);-webkit-backdrop-filter:blur(26px) saturate(170%);border:1px solid var(--line);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 10px 28px rgba(0,0,0,.35)}
+.btn{min-height:48px;padding:0 18px;border-radius:16px;border:1px solid rgba(var(--a-rgb),.6);background:rgba(var(--a-rgb),.2);color:var(--a-soft);font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px}
+.btn.ghost{background:rgba(255,255,255,.06);border-color:var(--line);color:var(--text);font-weight:500}
+.btn.small{min-height:44px;padding:0 16px}
+.btn:active,.round-btn:active,.nav:active{transform:scale(.98)}
+.nav{display:flex;align-items:center;gap:14px;width:100%;min-height:64px;padding:10px 16px;text-align:left}
+.nav-ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:rgba(var(--a-rgb),.2);color:var(--a)}
+.swatches{display:flex;flex-wrap:wrap;gap:8px}
+.swatch{flex:1 1 28%;min-height:64px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:13px}
+.swatch.on{border-color:var(--a);background:rgba(var(--a-rgb),.18)}
+.dot{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#0B0B0D}
+.stepper{display:flex;align-items:center;gap:12px}.big{font-size:40px;font-weight:700;color:var(--a-soft);line-height:1}
+.switch{width:56px;height:32px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.1);position:relative;flex:none;padding:0}
+.switch .knob{position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:var(--text);transition:transform .18s}
+.switch.on{background:rgba(var(--a-rgb),.45);border-color:var(--a)}.switch.on .knob{transform:translateX(24px);background:var(--a-soft)}
+.input{width:100%;min-height:48px;padding:0 14px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.07);color:var(--text);font:inherit;color-scheme:dark}
+.input::placeholder{color:rgba(244,248,250,.5)}
+select.input{appearance:auto}
+.datebox{display:flex;flex-direction:column;gap:6px}.datebox .line .input{flex:1}
+.seg{display:flex;gap:6px;padding:4px;border-radius:16px;background:rgba(255,255,255,.06);border:1px solid var(--line)}
+.seg-btn{flex:1;min-height:44px;border-radius:12px;border:0;background:transparent;font-weight:500}
+.seg-btn.on{background:rgba(var(--a-rgb),.22);color:var(--a-soft);font-weight:700;box-shadow:inset 0 0 0 1px rgba(var(--a-rgb),.55)}
+.chip{min-height:44px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.06);font-size:13px}
+.chip.on{border-color:var(--a);color:var(--a-soft);background:rgba(var(--a-rgb),.16)}
+.list{display:flex;flex-direction:column;gap:6px}.list .label{margin-top:10px}
+.rows{overflow:hidden}
+.row{display:flex;align-items:center;gap:4px;padding:2px 6px 2px 16px;min-height:56px;border-top:1px solid rgba(255,255,255,.08)}
+.row:first-child{border-top:0}.row.dim .row-name{opacity:.45;text-decoration:line-through}
+.row-main{flex:1;display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0}
+.badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(var(--a-rgb),.2);color:var(--a-soft)}
+.icon-btn{min-width:44px;height:44px;border:0;background:transparent;border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--muted);padding:0 6px}
+.icon-btn.danger{color:var(--bad)}.icon-btn.armed{background:rgba(255,138,138,.2);padding:0 12px;font-weight:700}
+.check{display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-top:1px solid rgba(255,255,255,.08)}
+.tag{flex:none;font-size:11px;font-weight:700;letter-spacing:.6px;padding:3px 8px;border-radius:8px;margin-top:2px}
+.check.pass .tag{background:rgba(123,221,166,.22);color:#9DF0C0}
+.check.warn .tag{background:rgba(var(--a-rgb),.22);color:var(--a-soft)}
+.check.fail .tag{background:rgba(255,138,138,.25);color:var(--bad)}
+.banner{position:fixed;left:14px;right:14px;max-width:452px;margin:0 auto;bottom:calc(env(safe-area-inset-bottom,0px) + 16px);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px;z-index:30;background:rgba(30,30,34,.85)}
+#toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 92px);transform:translate(-50%,12px);max-width:86%;padding:12px 16px;border-radius:14px;background:rgba(40,40,46,.95);border:1px solid var(--line);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:40;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---- Part 2: Log Notes ---- */
+.stack{display:flex;flex-direction:column;gap:12px}
+.seg3{display:flex;gap:8px}
+.pill{flex:1;min-height:44px;border-radius:14px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);font-weight:500;display:flex;align-items:center;justify-content:center;gap:6px}
+.pill.on{background:rgba(var(--a-rgb),.2);border-color:rgba(var(--a-rgb),.6);color:var(--a-soft);font-weight:700}
+.picker{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:52px;padding:0 16px;border-radius:16px;text-align:left}
+.picker.small-row{min-height:44px;font-size:14px;border-radius:14px;background:rgba(255,255,255,.06);box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+.tile{flex:1;min-height:76px;border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;font-size:13px;font-weight:500;color:var(--a-soft)}
+textarea.input.area{padding:12px 14px;min-height:170px;resize:vertical;line-height:1.45}
+.thumbs{display:flex;gap:10px;overflow-x:auto;padding:2px 0}
+.thumbs:empty{display:none}
+.thumb{position:relative;flex:none;width:92px;height:122px;border-radius:12px;overflow:hidden;border:1px solid var(--line);background:rgba(255,255,255,.06)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.thumb .pg{position:absolute;left:6px;bottom:6px;font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;background:rgba(0,0,0,.6)}
+.thumb .x{position:absolute;top:4px;right:4px;width:30px;height:30px;border-radius:50%;border:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;padding:0}
+.privacy{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);font-size:13px;color:var(--muted)}
+.privacy svg{flex:none;color:var(--a);margin-top:1px}
+.backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;max-height:84vh;overflow-y:auto;z-index:51;padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 18px);display:flex;flex-direction:column;gap:12px;background:#17171b;border:1px solid var(--line);border-radius:24px 24px 0 0}
+.row.pick{width:100%;border:0;border-top:1px solid rgba(255,255,255,.08);background:transparent;text-align:left;padding:2px 16px;min-height:52px;display:flex;align-items:center;justify-content:space-between}
+.rows .row.pick:first-child{border-top:0}
+.row.pick.sel{color:var(--a-soft);font-weight:700}
+.centered{align-items:center;text-align:center}
+.ok-ic{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(var(--a-rgb),.2);color:var(--a)}
+.big-s{font-size:20px}.right{text-align:right;font-weight:500}
+.note-card{display:flex;flex-direction:column;gap:6px;width:100%;padding:14px 16px;text-align:left}
+.preview{font-size:14px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.tagline{font-size:12px;font-weight:700;color:var(--a-soft)}
+.note-text{white-space:pre-wrap;word-break:break-word}
+.photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.photo{padding:0;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:transparent;line-height:0}
+.photo img{width:100%;height:auto;display:block}
+.lightbox{position:fixed;inset:0;z-index:60;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;padding:12px}
+.lightbox img{max-width:100%;max-height:100%;object-fit:contain}
+.danger-btn{color:var(--bad);border-color:rgba(255,138,138,.4)}
+
+</style>
 </head>
 <body>
 <div id="app"></div>
 <div id="banner"></div>
 <div id="toast" role="status" aria-live="polite"></div>
 <noscript>Revision Quest needs JavaScript turned on.</noscript>
-<script src="version.js"></script>
-<script src="db.js"></script>
-<script src="ui.js"></script>
-<script src="settings.js"></script>
-<script src="chapters-data.js"></script>
-<script src="chapters.js"></script>
-<script src="notes.js"></script>
-<script src="lognotes.js"></script>
-<script src="notes-screen.js"></script>
-<script src="app.js"></script>
+<script>
+/* ===== version ===== */
+/* Single place for the app version. Change this number on every upload so phones refresh. */
+self.APP_VERSION = '0.2.1';
+
+</script>
+<script>
+/* ===== db.js ===== */
+/* db.js - local storage on the phone (IndexedDB). All stores for the whole app are created here. */
+(function () {
+  var RQ = (window.RQ = window.RQ || {});
+  var NAME = 'revision-quest';
+  var VERSION = 1;
+  var STORES = {
+    settings: { keyPath: 'key' },
+    chapters: { keyPath: 'id', indexes: [['subject', 'subject']] },
+    notes: { keyPath: 'id', indexes: [['chapterId', 'chapterId']] },
+    questions: { keyPath: 'id', indexes: [['chapterId', 'chapterId'], ['noteId', 'noteId']] },
+    schedules: { keyPath: 'questionId' },
+    reviewLogs: { keyPath: 'id' },
+    sessions: { keyPath: 'id' },
+    mistakes: { keyPath: 'id' },
+    explanations: { keyPath: 'questionId' },
+    vaultSuggestions: { keyPath: 'id' }
+  };
+  var dbPromise = null;
+
+  function open() {
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('This browser has no local database (IndexedDB).')); return; }
+      var req = indexedDB.open(NAME, VERSION);
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        Object.keys(STORES).forEach(function (name) {
+          var def = STORES[name];
+          var store = db.objectStoreNames.contains(name)
+            ? req.transaction.objectStore(name)
+            : db.createObjectStore(name, { keyPath: def.keyPath });
+          (def.indexes || []).forEach(function (ix) {
+            if (!store.indexNames.contains(ix[0])) store.createIndex(ix[0], ix[1]);
+          });
+        });
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+      req.onblocked = function () { reject(new Error('Database is blocked by another open tab. Close other tabs and reload.')); };
+    });
+    dbPromise.catch(function () { dbPromise = null; });
+    return dbPromise;
+  }
+
+  function run(store, mode, fn) {
+    return open().then(function (db) {
+      return new Promise(function (resolve, reject) {
+        var tx = db.transaction(store, mode);
+        var req = fn(tx.objectStore(store));
+        tx.oncomplete = function () { resolve(req ? req.result : undefined); };
+        tx.onerror = function () { reject(tx.error); };
+        tx.onabort = function () { reject(tx.error || new Error('Save was cancelled.')); };
+      });
+    });
+  }
+
+  RQ.db = {
+    STORES: STORES,
+    open: open,
+    get: function (store, key) { return run(store, 'readonly', function (s) { return s.get(key); }); },
+    getAll: function (store) { return run(store, 'readonly', function (s) { return s.getAll(); }); },
+    getAllByIndex: function (store, index, value) { return run(store, 'readonly', function (s) { return s.index(index).getAll(value); }); },
+    count: function (store) { return run(store, 'readonly', function (s) { return s.count(); }); },
+    countByIndex: function (store, index, value) { return run(store, 'readonly', function (s) { return s.index(index).count(value); }); },
+    put: function (store, value) { return run(store, 'readwrite', function (s) { return s.put(value); }); },
+    delete: function (store, key) { return run(store, 'readwrite', function (s) { return s.delete(key); }); },
+    clear: function (store) { return run(store, 'readwrite', function (s) { return s.clear(); }); },
+    putMany: function (store, values) {
+      return open().then(function (db) {
+        return new Promise(function (resolve, reject) {
+          var tx = db.transaction(store, 'readwrite');
+          var s = tx.objectStore(store);
+          values.forEach(function (v) { s.put(v); });
+          tx.oncomplete = function () { resolve(values.length); };
+          tx.onerror = function () { reject(tx.error); };
+          tx.onabort = function () { reject(tx.error || new Error('Save was cancelled.')); };
+        });
+      });
+    }
+  };
+})();
+
+</script>
+<script>
+/* ===== ui.js ===== */
+/* ui.js - small helpers shared by all screens (build elements, icons, toast). */
+(function () {
+  var RQ = (window.RQ = window.RQ || {});
+  var NS = 'http://www.w3.org/2000/svg';
+
+  function h(tag, attrs) {
+    var el = document.createElement(tag);
+    attrs = attrs || {};
+    Object.keys(attrs).forEach(function (k) {
+      var v = attrs[k];
+      if (v === null || v === undefined || v === false) return;
+      if (k === 'class') el.className = v;
+      else if (k === 'text') el.textContent = v;
+      else if (k.indexOf('on') === 0 && typeof v === 'function') el.addEventListener(k.slice(2), v);
+      else el.setAttribute(k, v === true ? '' : v);
+    });
+    for (var i = 2; i < arguments.length; i++) append(el, arguments[i]);
+    return el;
+  }
+  function append(el, c) {
+    if (c === null || c === undefined || c === false) return;
+    if (Array.isArray(c)) { c.forEach(function (x) { append(el, x); }); return; }
+    el.append(c.nodeType ? c : document.createTextNode(String(c)));
+  }
+
+  var ICONS = {
+    back: '<path d="M15 5l-7 7 7 7"/>',
+    check: '<path d="M5 12l5 5 9-10"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    minus: '<path d="M5 12h14"/>',
+    chevron: '<path d="M9 6l6 6-6 6"/>',
+    eye: '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12z"/><circle cx="12" cy="12" r="3"/>',
+    eyeoff: '<path d="M17.9 17.9A10.9 10.9 0 0 1 12 20C5 20 1 12 1 12a18.5 18.5 0 0 1 5.1-5.9M9.9 4.2A9.1 9.1 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.2 3.2M14.1 14.1a3 3 0 1 1-4.2-4.2"/><path d="M1 1l22 22"/>',
+    trash: '<path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/>',
+    gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+    book: '<path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 19V5"/>',
+    pulse: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+    search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/>',
+    camera: '<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>',
+    pen: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    x: '<path d="M18 6L6 18M6 6l12 12"/>',
+    chevdown: '<path d="M6 9l6 6 6-6"/>',
+    shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    notes: '<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h8"/>'
+  };
+  function icon(name, size) {
+    var s = document.createElementNS(NS, 'svg');
+    s.setAttribute('viewBox', '0 0 24 24');
+    s.setAttribute('width', size || 20);
+    s.setAttribute('height', size || 20);
+    s.setAttribute('fill', 'none');
+    s.setAttribute('stroke', 'currentColor');
+    s.setAttribute('stroke-width', '2');
+    s.setAttribute('stroke-linecap', 'round');
+    s.setAttribute('stroke-linejoin', 'round');
+    s.setAttribute('aria-hidden', 'true');
+    s.innerHTML = ICONS[name] || '';
+    return s;
+  }
+
+  var toastTimer = null;
+  function toast(msg) {
+    var box = document.getElementById('toast');
+    if (!box) return;
+    box.textContent = msg;
+    box.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { box.classList.remove('show'); }, 2600);
+  }
+
+  function header(title, opts) {
+    opts = opts || {};
+    return h('div', { class: 'head' },
+      opts.noBack ? null : h('button', { class: 'round-btn', 'aria-label': 'Back', onclick: function () { location.hash = opts.back || '#home'; } }, icon('back', 22)),
+      h('h1', { text: title }),
+      opts.right || null);
+  }
+
+  /* Photo links are tracked so they can be released when you leave a screen. */
+  var urls = [];
+  RQ.blobUrl = function (blob) { var u = URL.createObjectURL(blob); urls.push(u); return u; };
+  RQ.freeUrls = function () { urls.forEach(function (u) { URL.revokeObjectURL(u); }); urls = []; };
+
+  RQ.h = h;
+  RQ.icon = icon;
+  RQ.toast = toast;
+  RQ.header = header;
+  RQ.screens = RQ.screens || {};
+})();
+
+</script>
+<script>
+/* ===== settings.js ===== */
+/* settings.js - saved settings (colour, daily goal, vibration, exam dates) and the Settings screen. */
+(function () {
+  var RQ = window.RQ;
+  var h = RQ.h, icon = RQ.icon;
+
+  var DEFAULTS = { theme: 'gold', dailyGoal: 20, vibration: true, examMainDate: '', examAdvancedDate: '', lastBackupAt: null };
+  var THEMES = [
+    { id: 'gold', name: 'Gold', hex: '#E9D5A2', soft: '#F4E6BF', deep: '#DCC388', rgb: '233,213,162' },
+    { id: 'violet', name: 'Violet', hex: '#A894FF', soft: '#D2C6FF', deep: '#8F7BEA', rgb: '168,148,255' },
+    { id: 'ocean', name: 'Ocean', hex: '#7DB9FF', soft: '#B5DAFF', deep: '#5FA0EE', rgb: '125,185,255' },
+    { id: 'sunset', name: 'Sunset', hex: '#FF9F80', soft: '#FFCDB8', deep: '#F58662', rgb: '255,159,128' },
+    { id: 'emerald', name: 'Emerald', hex: '#7BDDA6', soft: '#B6F0CF', deep: '#5CC78B', rgb: '123,221,166' }
+  ];
+  var cache = {};
+  Object.keys(DEFAULTS).forEach(function (k) { cache[k] = DEFAULTS[k]; });
+
+  function applyTheme() {
+    var t = THEMES.filter(function (x) { return x.id === cache.theme; })[0] || THEMES[0];
+    var s = document.documentElement.style;
+    s.setProperty('--a', t.hex);
+    s.setProperty('--a-soft', t.soft);
+    s.setProperty('--a-deep', t.deep);
+    s.setProperty('--a-rgb', t.rgb);
+  }
+  function load() {
+    return RQ.db.getAll('settings').then(function (rows) {
+      rows.forEach(function (r) { if (Object.prototype.hasOwnProperty.call(DEFAULTS, r.key)) cache[r.key] = r.value; });
+      applyTheme();
+    });
+  }
+  function get(k) { return cache[k]; }
+  function set(k, v) {
+    var old = cache[k];
+    cache[k] = v;
+    if (k === 'theme') applyTheme();
+    return RQ.db.put('settings', { key: k, value: v }).catch(function (e) {
+      cache[k] = old;
+      if (k === 'theme') applyTheme();
+      RQ.toast('Could not save that setting.');
+      throw e;
+    });
+  }
+  /* Short vibration for right / wrong answers (used from Part 5). Respects the Settings switch. */
+  function buzz(kind) {
+    if (!cache.vibration || !navigator.vibrate) return;
+    navigator.vibrate(kind === 'wrong' ? [40, 60, 40] : 25);
+  }
+
+  RQ.settings = { THEMES: THEMES, DEFAULTS: DEFAULTS, load: load, get: get, set: set };
+  RQ.buzz = buzz;
+
+  function section(title, body) { return h('section', { class: 'sec' }, h('div', { class: 'label', text: title }), body); }
+
+  RQ.screens.settings = function (root) {
+    root.append(RQ.header('Settings'));
+
+    /* Colour */
+    var swatches = h('div', { class: 'swatches' });
+    function drawSwatches() {
+      swatches.replaceChildren();
+      THEMES.forEach(function (t) {
+        var on = cache.theme === t.id;
+        swatches.append(h('button', {
+          class: 'swatch' + (on ? ' on' : ''), 'aria-label': t.name + (on ? ' (selected)' : ''),
+          onclick: function () { RQ.settings.set('theme', t.id).then(drawSwatches).catch(function () {}); drawSwatches(); }
+        }, h('span', { class: 'dot', style: 'background:' + t.hex }, on ? icon('check', 16) : null), h('span', { text: t.name })));
+      });
+    }
+    drawSwatches();
+    root.append(section('APP COLOUR', h('div', { class: 'glass pad' }, swatches,
+      h('p', { class: 'hint', text: 'Gold is the default. The colour changes buttons, highlights and glows across the app.' }))));
+
+    /* Daily goal */
+    var goalVal = h('div', { class: 'big', text: String(cache.dailyGoal) });
+    function setGoal(n) {
+      n = Math.max(5, Math.min(200, n));
+      goalVal.textContent = String(n);
+      RQ.settings.set('dailyGoal', n).catch(function () {});
+    }
+    root.append(section('DAILY GOAL', h('div', { class: 'glass pad' },
+      h('div', { class: 'stepper' },
+        h('button', { class: 'round-btn', 'aria-label': 'Decrease goal', onclick: function () { setGoal(cache.dailyGoal - 5); } }, icon('minus', 22)),
+        h('div', { class: 'center' }, goalVal, h('div', { class: 'hint', text: 'items cleared per day' })),
+        h('button', { class: 'round-btn', 'aria-label': 'Increase goal', onclick: function () { setGoal(cache.dailyGoal + 5); } }, icon('plus', 22))))));
+
+    /* Vibration */
+    var sw = h('button', { class: 'switch' + (cache.vibration ? ' on' : ''), role: 'switch', 'aria-checked': String(cache.vibration), 'aria-label': 'Vibration on answers' }, h('span', { class: 'knob' }));
+    sw.addEventListener('click', function () {
+      var v = !cache.vibration;
+      RQ.settings.set('vibration', v).catch(function () {});
+      sw.classList.toggle('on', v);
+      sw.setAttribute('aria-checked', String(v));
+      if (v) RQ.buzz('right');
+    });
+    root.append(section('FEEL', h('div', { class: 'glass pad' },
+      h('div', { class: 'line' }, h('div', null, h('div', { class: 'strong', text: 'Vibration on answers' }), h('div', { class: 'hint', text: 'Short buzz for right, double buzz for wrong' })), sw),
+      h('button', { class: 'btn ghost', onclick: function () {
+        if (!navigator.vibrate) { RQ.toast('This browser cannot vibrate.'); return; }
+        navigator.vibrate(25);
+        setTimeout(function () { navigator.vibrate([40, 60, 40]); }, 400);
+      } }, 'Test vibration'))));
+
+    /* Exam dates */
+    function dateRow(label, key) {
+      var input = h('input', { type: 'date', class: 'input', value: cache[key] || '', 'aria-label': label });
+      input.addEventListener('change', function () { RQ.settings.set(key, input.value).catch(function () {}); });
+      var clear = h('button', { class: 'btn ghost small', onclick: function () { input.value = ''; RQ.settings.set(key, '').catch(function () {}); } }, 'Clear');
+      return h('div', { class: 'datebox' }, h('div', { class: 'strong', text: label }), h('div', { class: 'line' }, input, clear));
+    }
+    root.append(section('EXAM DATES (OPTIONAL)', h('div', { class: 'glass pad' },
+      dateRow('JEE Main', 'examMainDate'), dateRow('JEE Advanced', 'examAdvancedDate'),
+      h('p', { class: 'hint', text: 'Used later so revision gets tighter as an exam gets closer. Safe to leave empty.' }))));
+
+    /* Storage */
+    var storageLine = h('div', { class: 'strong', text: 'Checking...' });
+    var storageHint = h('div', { class: 'hint', text: '' });
+    var protectBtn = h('button', { class: 'btn', hidden: true }, 'Protect my data');
+    function refreshStorage() {
+      var persisted = navigator.storage && navigator.storage.persisted ? navigator.storage.persisted() : Promise.resolve(null);
+      var est = navigator.storage && navigator.storage.estimate ? navigator.storage.estimate() : Promise.resolve(null);
+      Promise.all([persisted, est]).then(function (r) {
+        var p = r[0], e = r[1];
+        storageLine.textContent = p === true ? 'Protected: Android will not clear your data when space is low' : (p === false ? 'Not protected yet' : 'Protection status unknown here');
+        var used = e && typeof e.usage === 'number' ? 'Using ' + (e.usage / 1048576).toFixed(1) + ' MB. ' : '';
+        storageHint.textContent = used + 'Backups (coming in a later part) are the real safety net.';
+        protectBtn.hidden = p !== false;
+      }).catch(function () { storageLine.textContent = 'Could not read storage status'; });
+    }
+    protectBtn.addEventListener('click', function () {
+      if (!navigator.storage || !navigator.storage.persist) { RQ.toast('Not supported in this browser.'); return; }
+      navigator.storage.persist().then(function (ok) {
+        RQ.toast(ok ? 'Your data is now protected.' : 'Chrome did not grant it yet. Installing the app to the home screen usually helps.');
+        refreshStorage();
+      });
+    });
+    refreshStorage();
+    root.append(section('STORAGE', h('div', { class: 'glass pad' }, storageLine, storageHint, protectBtn)));
+
+    /* App version */
+    root.append(section('APP', h('div', { class: 'glass pad' },
+      h('div', { class: 'line' }, h('div', { class: 'strong', text: 'Version' }), h('div', { class: 'muted', text: self.APP_VERSION })),
+      h('button', { class: 'btn', onclick: function () { RQ.checkUpdate(); } }, 'Check for updates'))));
+  };
+})();
+
+</script>
+<script>
+/* ===== chapters-data.js ===== */
+/* chapters-data.js - built-in JEE chapter list (Physics, Chemistry, Maths) covering Main and Advanced.
+   Edit names here if you want to correct them. After changing this file, raise the number in version.js.
+   New names are added automatically; chapters you already have (and any you hid) are never overwritten. */
+(function () {
+  var RQ = (window.RQ = window.RQ || {});
+  RQ.BUILTIN = {
+    Physics: [
+      { group: 'Class 11 - Mechanics', items: [
+        'Units and Measurements', 'Kinematics (1D and 2D Motion)', 'Laws of Motion and Friction',
+        'Work, Energy and Power', 'Center of Mass and Collisions', 'Rotational Motion',
+        'Gravitation', 'Mechanical Properties of Solids', 'Mechanical Properties of Fluids'] },
+      { group: 'Class 11 - Heat and Waves', items: [
+        'Thermal Properties of Matter and Calorimetry', 'Heat Transfer and Thermal Expansion',
+        'Thermodynamics', 'Kinetic Theory of Gases', 'Oscillations (SHM)', 'Waves and Sound'] },
+      { group: 'Class 12 - Electricity and Magnetism', items: [
+        'Electrostatics', 'Electric Potential and Capacitance', 'Current Electricity',
+        'Moving Charges and Magnetism', 'Magnetism and Matter', 'Electromagnetic Induction',
+        'Alternating Current', 'Electromagnetic Waves'] },
+      { group: 'Class 12 - Optics and Modern Physics', items: [
+        'Ray Optics and Optical Instruments', 'Wave Optics', 'Dual Nature of Matter and Radiation',
+        'Atoms', 'Nuclei', 'Semiconductor Electronics', 'Communication Systems'] },
+      { group: 'Practical', items: ['Experimental Skills'] }
+    ],
+    Chemistry: [
+      { group: 'Physical Chemistry', items: [
+        'Some Basic Concepts of Chemistry (Mole Concept)', 'Atomic Structure', 'States of Matter (Gases and Liquids)',
+        'Chemical Thermodynamics', 'Chemical Equilibrium', 'Ionic Equilibrium', 'Redox Reactions',
+        'Solutions', 'Electrochemistry', 'Chemical Kinetics', 'Solid State', 'Surface Chemistry', 'Nuclear Chemistry'] },
+      { group: 'Inorganic Chemistry', items: [
+        'Classification of Elements and Periodicity', 'Chemical Bonding and Molecular Structure',
+        'Hydrogen', 's-Block Elements', 'p-Block Elements (Groups 13 and 14)', 'p-Block Elements (Groups 15 to 18)',
+        'd- and f-Block Elements', 'Coordination Compounds', 'General Principles of Metallurgy',
+        'Environmental Chemistry', 'Qualitative Salt Analysis'] },
+      { group: 'Organic Chemistry', items: [
+        'Basic Principles and General Organic Chemistry (GOC)', 'Isomerism', 'Hydrocarbons (Alkanes, Alkenes, Alkynes)',
+        'Aromatic Hydrocarbons', 'Haloalkanes and Haloarenes', 'Alcohols, Phenols and Ethers',
+        'Aldehydes and Ketones', 'Carboxylic Acids and Derivatives', 'Amines', 'Biomolecules',
+        'Polymers', 'Chemistry in Everyday Life', 'Principles of Practical Chemistry'] }
+    ],
+    Maths: [
+      { group: 'Algebra', items: [
+        'Sets, Relations and Functions', 'Complex Numbers', 'Quadratic Equations and Inequalities',
+        'Sequences and Series', 'Permutations and Combinations', 'Binomial Theorem',
+        'Matrices and Determinants', 'Mathematical Reasoning'] },
+      { group: 'Trigonometry', items: [
+        'Trigonometric Ratios and Identities', 'Trigonometric Equations', 'Inverse Trigonometric Functions',
+        'Properties of Triangles and Heights and Distances'] },
+      { group: 'Coordinate Geometry', items: [
+        'Straight Lines', 'Circles', 'Parabola', 'Ellipse', 'Hyperbola'] },
+      { group: 'Calculus', items: [
+        'Limits and Continuity', 'Differentiability and Differentiation', 'Applications of Derivatives',
+        'Indefinite Integration', 'Definite Integration', 'Area Under Curves', 'Differential Equations'] },
+      { group: 'Vectors, 3D and Probability', items: [
+        'Vector Algebra', 'Three-Dimensional Geometry', 'Probability', 'Statistics'] }
+    ]
+  };
+  RQ.SUBJECTS = ['Physics', 'Chemistry', 'Maths'];
+})();
+
+</script>
+<script>
+/* ===== chapters.js ===== */
+/* chapters.js - chapter storage (seeding, add, hide, delete) and the Chapters screen. */
+(function () {
+  var RQ = window.RQ;
+  var h = RQ.h, icon = RQ.icon;
+  var PREFIX = { Physics: 'phy', Chemistry: 'che', Maths: 'mat' };
+  var CUSTOM_GROUP = 'My chapters';
+
+  function slug(s) { return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60); }
+
+  function builtinRecords() {
+    var out = [];
+    RQ.SUBJECTS.forEach(function (subject) {
+      var order = 0;
+      RQ.BUILTIN[subject].forEach(function (g, gi) {
+        g.items.forEach(function (name) {
+          out.push({ id: PREFIX[subject] + '-' + slug(name), subject: subject, group: g.group, groupOrder: gi, order: order++, name: name, isCustom: false, hidden: false });
+        });
+      });
+    });
+    return out;
+  }
+
+  /* Adds any built-in chapter that is missing. Never touches chapters that already exist. */
+  function seed() {
+    return RQ.db.getAll('chapters').then(function (existing) {
+      var have = {};
+      existing.forEach(function (c) { have[c.id] = true; });
+      var missing = builtinRecords().filter(function (c) { return !have[c.id]; });
+      return missing.length ? RQ.db.putMany('chapters', missing).then(function () { return missing.length; }) : 0;
+    });
+  }
+
+  function all() { return RQ.db.getAll('chapters'); }
+
+  function sortList(list) {
+    return list.slice().sort(function (a, b) {
+      if (a.groupOrder !== b.groupOrder) return a.groupOrder - b.groupOrder;
+      if (a.order !== b.order) return a.order - b.order;
+      return a.name.localeCompare(b.name);
+    });
+  }
+
+  /* For later parts (Log Notes, filters): chapters of one subject, hidden ones left out by default. */
+  function listFor(subject, includeHidden) {
+    return all().then(function (rows) {
+      return sortList(rows.filter(function (c) { return c.subject === subject && (includeHidden || !c.hidden); }));
+    });
+  }
+
+  function addCustom(subject, name, group) {
+    name = String(name || '').trim().replace(/\s+/g, ' ');
+    if (!name) return Promise.reject(new Error('Type a chapter name first.'));
+    return all().then(function (rows) {
+      var dupe = rows.some(function (c) { return c.subject === subject && c.name.toLowerCase() === name.toLowerCase(); });
+      if (dupe) throw new Error('That chapter is already in the list.');
+      var inSubject = rows.filter(function (c) { return c.subject === subject; });
+      var groupRow = inSubject.filter(function (c) { return c.group === group; })[0];
+      var rec = {
+        id: PREFIX[subject] + '-c-' + Date.now().toString(36), subject: subject, group: group || CUSTOM_GROUP,
+        groupOrder: groupRow ? groupRow.groupOrder : 999,
+        order: 1000 + inSubject.length, name: name, isCustom: true, hidden: false
+      };
+      return RQ.db.put('chapters', rec).then(function () { return rec; });
+    });
+  }
+
+  function setHidden(id, hidden) {
+    return RQ.db.get('chapters', id).then(function (c) {
+      if (!c) throw new Error('Chapter not found.');
+      c.hidden = !!hidden;
+      return RQ.db.put('chapters', c);
+    });
+  }
+
+  /* A chapter that already has notes or questions cannot be deleted; hide it instead. */
+  function removeCustom(id) {
+    return Promise.all([RQ.db.countByIndex('notes', 'chapterId', id), RQ.db.countByIndex('questions', 'chapterId', id)]).then(function (n) {
+      if (n[0] + n[1] > 0) throw new Error('This chapter has notes or questions. Hide it instead.');
+      return RQ.db.delete('chapters', id);
+    });
+  }
+
+  RQ.chapters = { seed: seed, all: all, listFor: listFor, addCustom: addCustom, setHidden: setHidden, removeCustom: removeCustom, CUSTOM_GROUP: CUSTOM_GROUP };
+
+  /* ---------- Chapters screen ---------- */
+  RQ.state = RQ.state || { subject: 'Physics', showHidden: false, query: '' };
+
+  RQ.screens.chapters = function (root) {
+    var st = RQ.state;
+    var listBox = h('div', { class: 'list' });
+    var summary = h('div', { class: 'hint center-text' });
+    var seg = h('div', { class: 'seg' });
+    var chip = h('button', { class: 'chip' });
+    var rows = [];
+
+    function drawSeg() {
+      seg.replaceChildren();
+      RQ.SUBJECTS.forEach(function (s) {
+        seg.append(h('button', { class: 'seg-btn' + (st.subject === s ? ' on' : ''), onclick: function () { st.subject = s; drawSeg(); drawList(); fillGroups(); } }, s));
+      });
+    }
+    function drawChip() {
+      chip.className = 'chip' + (st.showHidden ? ' on' : '');
+      chip.textContent = st.showHidden ? 'Showing hidden' : 'Show hidden';
+    }
+    chip.addEventListener('click', function () { st.showHidden = !st.showHidden; drawChip(); drawList(); });
+
+    function drawList() {
+      var subjectRows = rows.filter(function (c) { return c.subject === st.subject; });
+      var hiddenCount = subjectRows.filter(function (c) { return c.hidden; }).length;
+      var q = st.query.trim().toLowerCase();
+      var shown = sortList(subjectRows.filter(function (c) {
+        return (st.showHidden || !c.hidden) && (!q || c.name.toLowerCase().indexOf(q) !== -1 || c.group.toLowerCase().indexOf(q) !== -1);
+      }));
+      summary.textContent = subjectRows.length + ' chapters' + (hiddenCount ? ' - ' + hiddenCount + ' hidden' : '');
+      listBox.replaceChildren();
+      if (!shown.length) { listBox.append(h('div', { class: 'glass pad muted center-text', text: q ? 'No chapter matches your search.' : 'Nothing to show.' })); return; }
+      var lastGroup = null, card = null;
+      shown.forEach(function (c) {
+        if (c.group !== lastGroup) {
+          lastGroup = c.group;
+          listBox.append(h('div', { class: 'label', text: c.group.toUpperCase() }));
+          card = h('div', { class: 'glass rows' });
+          listBox.append(card);
+        }
+        card.append(row(c));
+      });
+    }
+
+    function reload() { return all().then(function (r) { rows = r; drawList(); }); }
+
+    function row(c) {
+      var armed = false, delBtn = null;
+      var eye = h('button', { class: 'icon-btn', 'aria-label': (c.hidden ? 'Show ' : 'Hide ') + c.name, onclick: function () {
+        setHidden(c.id, !c.hidden).then(reload).catch(function (e) { RQ.toast(e.message); });
+      } }, icon(c.hidden ? 'eyeoff' : 'eye'));
+      if (c.isCustom) {
+        delBtn = h('button', { class: 'icon-btn danger', 'aria-label': 'Delete ' + c.name });
+        delBtn.append(icon('trash'));
+        delBtn.addEventListener('click', function () {
+          if (!armed) {
+            armed = true; delBtn.replaceChildren(document.createTextNode('Delete?')); delBtn.classList.add('armed');
+            setTimeout(function () { if (armed) { armed = false; delBtn.classList.remove('armed'); delBtn.replaceChildren(icon('trash')); } }, 3000);
+            return;
+          }
+          removeCustom(c.id).then(reload).catch(function (e) { RQ.toast(e.message); armed = false; delBtn.classList.remove('armed'); delBtn.replaceChildren(icon('trash')); });
+        });
+      }
+      return h('div', { class: 'row' + (c.hidden ? ' dim' : '') },
+        h('div', { class: 'row-main' }, h('span', { class: 'row-name', text: c.name }), c.isCustom ? h('span', { class: 'badge', text: 'Custom' }) : null),
+        eye, delBtn);
+    }
+
+    /* Search */
+    var search = h('input', { class: 'input', type: 'search', placeholder: 'Search chapters', 'aria-label': 'Search chapters', value: st.query });
+    search.addEventListener('input', function () { st.query = search.value; drawList(); });
+
+    /* Add form */
+    var nameIn = h('input', { class: 'input', type: 'text', placeholder: 'New chapter name', 'aria-label': 'New chapter name', maxlength: '80' });
+    var groupSel = h('select', { class: 'input', 'aria-label': 'Group' });
+    function fillGroups() {
+      var groups = RQ.BUILTIN[st.subject].map(function (g) { return g.group; });
+      groups.push(CUSTOM_GROUP);
+      groupSel.replaceChildren();
+      groups.forEach(function (g) { groupSel.append(h('option', { value: g, text: g })); });
+      groupSel.value = CUSTOM_GROUP;
+    }
+    var form = h('div', { class: 'glass pad', hidden: true },
+      h('div', { class: 'strong', text: 'Add your own chapter' }),
+      h('div', { class: 'hint', text: 'It is added to the subject selected above.' }),
+      nameIn, groupSel,
+      h('button', { class: 'btn', onclick: function () {
+        addCustom(st.subject, nameIn.value, groupSel.value).then(function () {
+          nameIn.value = ''; RQ.toast('Chapter added.'); return reload();
+        }).catch(function (e) { RQ.toast(e.message); });
+      } }, 'Add chapter'));
+    var addBtn = h('button', { class: 'btn', onclick: function () { form.hidden = !form.hidden; if (!form.hidden) nameIn.focus(); } }, icon('plus', 18), ' Add your own chapter');
+
+    root.append(RQ.header('Chapters'), seg, h('div', { class: 'line gap' }, summary, chip), search, addBtn, form, listBox);
+    drawSeg(); drawChip(); fillGroups();
+    reload().catch(function (e) { listBox.append(h('div', { class: 'glass pad', text: 'Could not load chapters: ' + e.message })); });
+  };
+})();
+
+</script>
+<script>
+/* ===== notes.js ===== */
+/* notes.js - saving, reading and deleting notes, plus photo compression. (Screens are in lognotes.js and notes-screen.js.) */
+(function () {
+  var RQ = window.RQ;
+  var MAX_SIDE = 1600;
+  var MAX_PAGES = 12;
+  var DRAFT_KEY = 'draftNote';
+
+  function newId() { return 'n-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+
+  function loadBitmap(file) {
+    if (window.createImageBitmap) {
+      return createImageBitmap(file, { imageOrientation: 'from-image' }).catch(function () { return createImageBitmap(file); });
+    }
+    return new Promise(function (resolve, reject) {
+      var url = URL.createObjectURL(file), img = new Image();
+      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('Could not read this photo.')); };
+      img.src = url;
+    });
+  }
+
+  /* Shrinks a photo so its longest side is at most 1600 px and saves it as a JPEG. */
+  function compressImage(file) {
+    return loadBitmap(file).then(function (bmp) {
+      var w = bmp.width, h = bmp.height, s = Math.min(1, MAX_SIDE / Math.max(w, h));
+      var cw = Math.max(1, Math.round(w * s)), ch = Math.max(1, Math.round(h * s));
+      var c = document.createElement('canvas');
+      c.width = cw; c.height = ch;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, cw, ch);
+      ctx.drawImage(bmp, 0, 0, cw, ch);
+      if (bmp.close) bmp.close();
+      return new Promise(function (resolve, reject) {
+        c.toBlob(function (b) { b ? resolve({ blob: b, w: cw, h: ch }) : reject(new Error('Could not compress this photo.')); }, 'image/jpeg', 0.82);
+      });
+    });
+  }
+
+  /* True if there is room to store more photos (needs about 30 MB free). */
+  function hasRoom() {
+    if (!navigator.storage || !navigator.storage.estimate) return Promise.resolve(true);
+    return navigator.storage.estimate().then(function (e) {
+      if (typeof e.quota !== 'number' || typeof e.usage !== 'number') return true;
+      return e.quota - e.usage > 30 * 1048576;
+    }).catch(function () { return true; });
+  }
+
+  RQ.notes = {
+    MAX_PAGES: MAX_PAGES,
+    newId: newId,
+    compressImage: compressImage,
+    hasRoom: hasRoom,
+    save: function (note) { return RQ.db.put('notes', note); },
+    get: function (id) { return RQ.db.get('notes', id); },
+    all: function () {
+      return RQ.db.getAll('notes').then(function (rows) { return rows.sort(function (a, b) { return b.createdAt - a.createdAt; }); });
+    },
+    remove: function (id) { return RQ.db.delete('notes', id); },
+    findDuplicate: function (chapterId, text) {
+      if (!text) return Promise.resolve(null);
+      return RQ.db.getAllByIndex('notes', 'chapterId', chapterId).then(function (rows) {
+        return rows.filter(function (n) { return (n.text || '').trim() === text; })[0] || null;
+      });
+    },
+    saveDraft: function (d) { return RQ.db.put('settings', { key: DRAFT_KEY, value: d }); },
+    loadDraft: function () { return RQ.db.get('settings', DRAFT_KEY).then(function (r) { return r ? r.value : null; }); },
+    clearDraft: function () { return RQ.db.delete('settings', DRAFT_KEY); }
+  };
+})();
+
+</script>
+<script>
+/* ===== lognotes.js ===== */
+/* lognotes.js - the Log Notes screen (subject, chapter, material, save) and the Saved screen. */
+(function () {
+  var RQ = window.RQ;
+  var h = RQ.h, icon = RQ.icon;
+
+  /* ---------- Chapter picker (bottom sheet) ---------- */
+  function openSheet(subject, onPick, selectedId) {
+    var q = '';
+    var backdrop = h('div', { class: 'backdrop' });
+    var sheet = h('div', { class: 'sheet', role: 'dialog', 'aria-label': 'Choose a chapter' });
+    var list = h('div', { class: 'list' });
+    document.body.style.overflow = 'hidden';
+    function close() { backdrop.remove(); sheet.remove(); document.body.style.overflow = ''; }
+    backdrop.addEventListener('click', close);
+
+    function draw() {
+      RQ.chapters.listFor(subject, false).then(function (rows) {
+        var needle = q.trim().toLowerCase();
+        var shown = rows.filter(function (c) { return !needle || c.name.toLowerCase().indexOf(needle) !== -1 || c.group.toLowerCase().indexOf(needle) !== -1; });
+        list.replaceChildren();
+        if (!shown.length) { list.append(h('div', { class: 'muted center-text pad', text: 'No chapter matches. You can add it below.' })); return; }
+        var last = null, card = null;
+        shown.forEach(function (c) {
+          if (c.group !== last) { last = c.group; list.append(h('div', { class: 'label', text: c.group.toUpperCase() })); card = h('div', { class: 'glass rows' }); list.append(card); }
+          card.append(h('button', { class: 'row pick' + (c.id === selectedId ? ' sel' : ''), onclick: function () { onPick(c); close(); } },
+            h('span', { class: 'row-name', text: c.name }), c.id === selectedId ? icon('check', 18) : null));
+        });
+      });
+    }
+    var search = h('input', { class: 'input', type: 'search', placeholder: 'Search chapters', 'aria-label': 'Search chapters' });
+    search.addEventListener('input', function () { q = search.value; draw(); });
+    var nameIn = h('input', { class: 'input', type: 'text', placeholder: 'Not listed? Type a new chapter name', maxlength: '80', 'aria-label': 'New chapter name' });
+    var addBtn = h('button', { class: 'btn ghost', onclick: function () {
+      RQ.chapters.addCustom(subject, nameIn.value, RQ.chapters.CUSTOM_GROUP).then(function (rec) { onPick(rec); close(); }).catch(function (e) { RQ.toast(e.message); });
+    } }, 'Add and use this chapter');
+    sheet.append(
+      h('div', { class: 'line' }, h('div', { class: 'strong', text: subject + ' chapters' }), h('button', { class: 'round-btn', 'aria-label': 'Close', onclick: close }, icon('x', 20))),
+      search, list, h('div', { class: 'pad' }, nameIn, addBtn));
+    document.body.append(backdrop, sheet);
+    draw();
+  }
+
+  /* ---------- Log Notes ---------- */
+  RQ.screens.lognotes = function (root) {
+    var st = { subject: null, chapter: null, title: '', hints: '', text: '', photos: [], showText: false, showOpt: false };
+    var saving = false, draftTimer = null;
+
+    function saveDraftSoon() {
+      clearTimeout(draftTimer);
+      draftTimer = setTimeout(function () {
+        var empty = !st.subject && !st.chapter && !st.title && !st.hints && !st.text;
+        (empty ? RQ.notes.clearDraft() : RQ.notes.saveDraft({ subject: st.subject, chapterId: st.chapter && st.chapter.id, chapterName: st.chapter && st.chapter.name, title: st.title, hints: st.hints, text: st.text })).catch(function () {});
+      }, 500);
+    }
+
+    /* Subject */
+    var subjRow = h('div', { class: 'seg3' });
+    function drawSubjects() {
+      subjRow.replaceChildren();
+      RQ.SUBJECTS.forEach(function (s) {
+        var on = st.subject === s;
+        subjRow.append(h('button', { class: 'pill' + (on ? ' on' : ''), onclick: function () {
+          if (st.subject !== s) { st.subject = s; if (st.chapter && st.chapter.subject !== s) st.chapter = null; drawSubjects(); drawChapter(); saveDraftSoon(); }
+        } }, on ? icon('check', 16) : null, s));
+      });
+    }
+
+    /* Chapter */
+    var chapterBtn = h('button', { class: 'glass picker' });
+    function drawChapter() {
+      chapterBtn.replaceChildren(h('span', { class: st.chapter ? 'strong' : 'muted', text: st.chapter ? st.chapter.name : 'Choose a chapter' }), icon('chevdown', 20));
+    }
+    chapterBtn.addEventListener('click', function () {
+      if (!st.subject) { RQ.toast('Pick a subject first.'); return; }
+      openSheet(st.subject, function (c) { st.chapter = c; drawChapter(); saveDraftSoon(); }, st.chapter && st.chapter.id);
+    });
+
+    /* Optional fields */
+    var titleIn = h('input', { class: 'input', type: 'text', placeholder: 'Lecture title (optional)', maxlength: '100', 'aria-label': 'Lecture title' });
+    var hintsIn = h('input', { class: 'input', type: 'text', placeholder: 'Topic hints (optional)', maxlength: '200', 'aria-label': 'Topic hints' });
+    titleIn.addEventListener('input', function () { st.title = titleIn.value; saveDraftSoon(); });
+    hintsIn.addEventListener('input', function () { st.hints = hintsIn.value; saveDraftSoon(); });
+    var optBox = h('div', { class: 'stack', hidden: true }, titleIn, hintsIn);
+    var optBtn = h('button', { class: 'glass picker small-row', onclick: function () { st.showOpt = !st.showOpt; optBox.hidden = !st.showOpt; } },
+      h('span', { text: 'Optional: lecture title, topic hints' }), icon('chevdown', 18));
+
+    /* Text */
+    var area = h('textarea', { class: 'input area', rows: '9', placeholder: 'Type or paste your notes here', maxlength: '20000', 'aria-label': 'Notes text' });
+    area.addEventListener('input', function () { st.text = area.value; saveDraftSoon(); });
+    var textBox = h('div', { hidden: true }, area);
+    function showText() { st.showText = true; textBox.hidden = false; }
+
+    /* Photos */
+    var cam = h('input', { type: 'file', accept: 'image/*', capture: 'environment', hidden: true });
+    var gal = h('input', { type: 'file', accept: 'image/*', multiple: true, hidden: true });
+    [cam, gal].forEach(function (inp) { inp.addEventListener('change', function () { addFiles(inp.files); inp.value = ''; }); });
+    var pages = h('div', { class: 'thumbs' });
+    var pagesHint = h('div', { class: 'hint', text: 'Add several pages to keep them together as one upload.' });
+    function drawPages() {
+      pages.replaceChildren();
+      st.photos.forEach(function (p, i) {
+        pages.append(h('div', { class: 'thumb' },
+          h('img', { src: p.url, alt: 'Page ' + (i + 1) }),
+          h('span', { class: 'pg', text: 'Page ' + (i + 1) }),
+          h('button', { class: 'x', 'aria-label': 'Remove page ' + (i + 1), onclick: function () { st.photos.splice(i, 1); drawPages(); } }, icon('x', 14))));
+      });
+      pagesHint.textContent = st.photos.length ? st.photos.length + ' of ' + RQ.notes.MAX_PAGES + ' pages added.' : 'Add several pages to keep them together as one upload.';
+    }
+    function addFiles(files) {
+      var list = Array.prototype.slice.call(files || []);
+      if (!list.length) return;
+      var room = RQ.notes.MAX_PAGES - st.photos.length;
+      if (room <= 0) { RQ.toast('You can add up to ' + RQ.notes.MAX_PAGES + ' pages in one note.'); return; }
+      if (list.length > room) { RQ.toast('Only the first ' + room + ' photos were added (limit ' + RQ.notes.MAX_PAGES + ').'); list = list.slice(0, room); }
+      RQ.notes.hasRoom().then(function (ok) {
+        if (!ok) { RQ.toast('Phone storage is almost full. Free some space first.'); return; }
+        return list.reduce(function (p, f) {
+          return p.then(function () {
+            return RQ.notes.compressImage(f).then(function (r) { r.url = RQ.blobUrl(r.blob); st.photos.push(r); drawPages(); })
+              .catch(function () { RQ.toast('Could not read one of the photos.'); });
+          });
+        }, Promise.resolve());
+      });
+    }
+
+    /* Save */
+    var saveBtn = h('button', { class: 'btn', onclick: save }, 'Save notes');
+    function need(msg, el) { RQ.toast(msg); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    function save() {
+      if (saving) return;
+      var text = st.text.trim();
+      if (!st.subject) return need('Pick a subject first.', subjRow);
+      if (!st.chapter) return need('Choose a chapter first.', chapterBtn);
+      if (!text && !st.photos.length) return need('Add some notes first: type, paste, or add a photo.', pages);
+      saving = true; saveBtn.disabled = true;
+      RQ.notes.findDuplicate(st.chapter.id, text).then(function (dupe) {
+        if (dupe && !window.confirm('You already saved this same text for this chapter. Save it again?')) { saving = false; saveBtn.disabled = false; return; }
+        var note = {
+          id: RQ.notes.newId(), subject: st.subject, chapterId: st.chapter.id, chapterName: st.chapter.name,
+          lectureTitle: st.title.trim(), topicHints: st.hints.trim(), text: text,
+          photos: st.photos.map(function (p) { return { blob: p.blob, w: p.w, h: p.h }; }),
+          createdAt: Date.now(), aiStatus: 'waiting'
+        };
+        return RQ.notes.save(note).then(function () { return RQ.notes.clearDraft(); }).then(function () { location.hash = '#saved/' + note.id; });
+      }).catch(function (e) {
+        saving = false; saveBtn.disabled = false;
+        RQ.toast('Could not save: ' + (e && e.message ? e.message : 'unknown problem') + '. Your notes are still here.');
+      });
+    }
+
+    function leave() {
+      if (st.photos.length && !window.confirm('Leave without saving? The photos you added will be discarded.')) return;
+      location.hash = '#home';
+    }
+
+    root.append(
+      h('div', { class: 'head' }, h('button', { class: 'round-btn', 'aria-label': 'Back', onclick: leave }, icon('back', 22)), h('h1', { text: 'Log Notes' })),
+      h('section', { class: 'sec' }, h('div', { class: 'label', text: 'SUBJECT' }), subjRow),
+      h('section', { class: 'sec' }, h('div', { class: 'label', text: 'CHAPTER' }), chapterBtn),
+      optBtn, optBox,
+      h('section', { class: 'sec' }, h('div', { class: 'label', text: 'ADD MATERIAL' }),
+        h('div', { class: 'seg3' },
+          h('button', { class: 'glass tile', onclick: function () { cam.click(); } }, icon('camera', 22), 'Camera'),
+          h('button', { class: 'glass tile', onclick: function () { gal.click(); } }, icon('image', 22), 'Photos'),
+          h('button', { class: 'glass tile', onclick: function () { showText(); area.focus(); } }, icon('pen', 22), 'Type'))),
+      textBox,
+      h('section', { class: 'sec' }, h('div', { class: 'label', text: 'PAGES IN THIS UPLOAD' }), pages, pagesHint),
+      h('div', { class: 'privacy' }, icon('shield', 18), h('span', { text: 'Saved on this phone first. Nothing is sent anywhere unless you choose to process it with AI.' })),
+      saveBtn, cam, gal);
+    drawSubjects(); drawChapter(); drawPages();
+
+    /* Bring back an unsaved draft (for example after the camera app closes the page). */
+    RQ.notes.loadDraft().then(function (d) {
+      if (!d || st.text || st.chapter || st.subject) return;
+      st.subject = d.subject || null; st.title = d.title || ''; st.hints = d.hints || ''; st.text = d.text || '';
+      if (d.chapterId) {
+        RQ.chapters.all().then(function (rows) {
+          var c = rows.filter(function (x) { return x.id === d.chapterId; })[0];
+          if (c) { st.chapter = c; drawChapter(); }
+        });
+      }
+      titleIn.value = st.title; hintsIn.value = st.hints; area.value = st.text;
+      if (st.text) showText();
+      if (st.title || st.hints) { st.showOpt = true; optBox.hidden = false; }
+      drawSubjects(); drawChapter();
+      if (st.subject || st.text || st.title) RQ.toast('Your unsaved draft was restored.');
+    }).catch(function () {});
+  };
+
+  /* ---------- Saved ---------- */
+  RQ.screens.saved = function (root, id) {
+    var box = h('div', { class: 'stack' });
+    root.append(RQ.header('Saved', { back: '#home' }), box);
+    RQ.notes.get(id).then(function (n) {
+      if (!n) { box.append(h('div', { class: 'glass pad', text: 'This note could not be found.' }), h('button', { class: 'btn', onclick: function () { location.hash = '#home'; } }, 'Back to Home')); return; }
+      var parts = [];
+      if (n.text) parts.push(n.text.length + ' characters of text');
+      if (n.photos && n.photos.length) parts.push(n.photos.length + (n.photos.length === 1 ? ' photo' : ' photos'));
+      box.append(
+        h('div', { class: 'glass pad centered' },
+          h('div', { class: 'ok-ic' }, icon('check', 28)),
+          h('div', { class: 'strong big-s', text: 'Saved on this phone' }),
+          h('div', { class: 'hint', text: 'Your original pages are safe, even if processing fails later.' })),
+        h('div', { class: 'glass pad' },
+          h('div', { class: 'line' }, h('span', { class: 'muted', text: 'Note' }), h('span', { class: 'right', text: n.subject + ' - ' + n.chapterName })),
+          h('div', { class: 'line' }, h('span', { class: 'muted', text: 'Original pages' }), h('span', { class: 'right', text: parts.join(', ') + ' - saved locally' })),
+          h('div', { class: 'line' }, h('span', { class: 'muted', text: 'Revision questions' }), h('span', { class: 'right', text: 'Not created yet' }))),
+        h('div', { class: 'hint', text: 'AI can read your notes and draft questions. You will be asked before anything is sent, and you can do it later. AI is added in the next part, so this note is marked "Waiting for AI".' }),
+        h('button', { class: 'btn ghost', onclick: function () { RQ.toast('AI processing arrives in the next part. Your note is saved and waiting.'); } }, 'Process with AI (next part)'),
+        h('button', { class: 'btn ghost', onclick: function () { RQ.toast('Adding questions by hand arrives in a later part.'); } }, 'Add questions by hand (later)'),
+        h('button', { class: 'btn ghost', onclick: function () { location.hash = '#note/' + n.id; } }, 'View this note'),
+        h('button', { class: 'btn', onclick: function () { location.hash = '#lognotes'; } }, 'Log another note'),
+        h('button', { class: 'btn ghost', onclick: function () { location.hash = '#home'; } }, 'Done'));
+    }).catch(function (e) { box.append(h('div', { class: 'glass pad', text: 'Could not open the note: ' + e.message })); });
+  };
+})();
+
+</script>
+<script>
+/* ===== notes-screen.js ===== */
+/* notes-screen.js - "My notes" list and a note's detail page (simple for now; the Vault notes library comes later). */
+(function () {
+  var RQ = window.RQ;
+  var h = RQ.h, icon = RQ.icon;
+
+  function when(ts) {
+    var d = new Date(ts);
+    return d.toLocaleDateString(undefined, { day: 'numeric', month: 'short' }) + ', ' + d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
+  }
+  function statusText(n) { return n.aiStatus === 'waiting' ? 'Waiting for AI' : (n.aiStatus === 'done' ? 'Questions made' : 'Saved'); }
+
+  RQ.screens.notes = function (root) {
+    var box = h('div', { class: 'stack' });
+    root.append(RQ.header('My notes'), box);
+    RQ.notes.all().then(function (rows) {
+      if (!rows.length) {
+        box.append(h('div', { class: 'glass pad centered' }, h('div', { class: 'strong', text: 'No notes yet' }), h('div', { class: 'hint', text: 'Notes you log will appear here.' })),
+          h('button', { class: 'btn', onclick: function () { location.hash = '#lognotes'; } }, 'Log your first note'));
+        return;
+      }
+      box.append(h('div', { class: 'hint center-text', text: rows.length + (rows.length === 1 ? ' note' : ' notes') }));
+      rows.forEach(function (n) {
+        var bits = [];
+        if (n.photos && n.photos.length) bits.push(n.photos.length + (n.photos.length === 1 ? ' photo' : ' photos'));
+        if (n.text) bits.push('text');
+        box.append(h('button', { class: 'glass note-card', onclick: function () { location.hash = '#note/' + n.id; } },
+          h('div', { class: 'line' }, h('span', { class: 'badge', text: n.subject }), h('span', { class: 'hint', text: when(n.createdAt) })),
+          h('div', { class: 'strong', text: n.chapterName }),
+          n.lectureTitle ? h('div', { class: 'muted', text: n.lectureTitle }) : null,
+          n.text ? h('div', { class: 'preview', text: n.text.slice(0, 110) }) : null,
+          h('div', { class: 'line' }, h('span', { class: 'hint', text: bits.join(' + ') }), h('span', { class: 'tagline', text: statusText(n) }))));
+      });
+    }).catch(function (e) { box.append(h('div', { class: 'glass pad', text: 'Could not load notes: ' + e.message })); });
+  };
+
+  RQ.screens.note = function (root, id) {
+    var box = h('div', { class: 'stack' });
+    root.append(RQ.header('Note', { back: '#notes' }), box);
+    RQ.notes.get(id).then(function (n) {
+      if (!n) { box.append(h('div', { class: 'glass pad', text: 'This note could not be found.' })); return; }
+      var armed = false;
+      var del = h('button', { class: 'btn ghost danger-btn' }, 'Delete this note');
+      del.addEventListener('click', function () {
+        if (!armed) { armed = true; del.textContent = 'Tap again to delete'; setTimeout(function () { if (armed) { armed = false; del.textContent = 'Delete this note'; } }, 3000); return; }
+        RQ.notes.remove(n.id).then(function () { location.hash = '#notes'; }).catch(function (e) { RQ.toast('Could not delete: ' + e.message); armed = false; del.textContent = 'Delete this note'; });
+      });
+      var photos = h('div', { class: 'photo-grid' });
+      (n.photos || []).forEach(function (p, i) {
+        var url = RQ.blobUrl(p.blob);
+        photos.append(h('button', { class: 'photo', 'aria-label': 'Open page ' + (i + 1), onclick: function () {
+          var layer = h('div', { class: 'lightbox', onclick: function () { layer.remove(); } }, h('img', { src: url, alt: 'Page ' + (i + 1) }));
+          document.body.append(layer);
+        } }, h('img', { src: url, alt: 'Page ' + (i + 1) })));
+      });
+      box.append(
+        h('div', { class: 'glass pad' },
+          h('div', { class: 'line' }, h('span', { class: 'badge', text: n.subject }), h('span', { class: 'hint', text: when(n.createdAt) })),
+          h('div', { class: 'strong', text: n.chapterName }),
+          n.lectureTitle ? h('div', { class: 'muted', text: n.lectureTitle }) : null,
+          n.topicHints ? h('div', { class: 'hint', text: 'Hints: ' + n.topicHints }) : null,
+          h('div', { class: 'tagline', text: statusText(n) })),
+        n.text ? h('div', { class: 'glass pad' }, h('div', { class: 'label', text: 'NOTES' }), h('div', { class: 'note-text', text: n.text })) : null,
+        (n.photos && n.photos.length) ? h('div', { class: 'glass pad' }, h('div', { class: 'label', text: 'PAGES (' + n.photos.length + ')' }), photos) : null,
+        del);
+    }).catch(function (e) { box.append(h('div', { class: 'glass pad', text: 'Could not open the note: ' + e.message })); });
+  };
+})();
+
+</script>
+<script>
+/* ===== app.js ===== */
+/* app.js - start-up, screen switching, Home screen, self-check, and the "Update available" message. */
+(function () {
+  var RQ = window.RQ;
+  var h = RQ.h, icon = RQ.icon;
+  var refreshing = false;
+
+  /* ---------- Update available (single-file version) ----------
+     Compares this page with the newest index.html on the web. No offline helper is used any more. */
+  function showUpdate(version) {
+    var box = document.getElementById('banner');
+    if (!box || box.firstChild) return;
+    box.append(h('div', { class: 'glass banner' },
+      h('div', null, h('div', { class: 'strong', text: 'Update available' }), h('div', { class: 'hint', text: 'Version ' + version + ' is ready. Tap to refresh.' })),
+      h('button', { class: 'btn small', onclick: function () { location.reload(); } }, 'Refresh')));
+  }
+  function fetchLatestVersion() {
+    return fetch(location.href.split('#')[0], { cache: 'reload' })
+      .then(function (r) { if (!r.ok) throw new Error('bad response'); return r.text(); })
+      .then(function (t) { var m = t.match(/APP_VERSION\s*=\s*'([^']+)'/); return m ? m[1] : null; });
+  }
+  function checkForUpdate(manual) {
+    return fetchLatestVersion().then(function (v) {
+      if (v && v !== self.APP_VERSION) { showUpdate(v); if (manual) RQ.toast('Update found.'); }
+      else if (manual) RQ.toast('You have the latest version (' + self.APP_VERSION + ').');
+    }).catch(function () { if (manual) RQ.toast('Could not check. Are you online?'); });
+  }
+  RQ.checkUpdate = function () { RQ.toast('Checking...'); checkForUpdate(true); };
+
+  /* Removes the old offline helper (service worker) and its saved copies, if an earlier version installed it. */
+  function removeOldOfflineHelper() {
+    if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(function (rs) { rs.forEach(function (r) { r.unregister(); }); }).catch(function () {});
+    if (window.caches) caches.keys().then(function (ks) { ks.filter(function (k) { return k.indexOf('rq-') === 0; }).forEach(function (k) { caches.delete(k); }); }).catch(function () {});
+  }
+  function setupUpdates() {
+    removeOldOfflineHelper();
+    checkForUpdate(false);
+    var last = Date.now();
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible' && Date.now() - last > 60000) { last = Date.now(); checkForUpdate(false); }
+    });
+  }
+
+  /* ---------- Self-check (so you can test Part 1 on your phone) ---------- */
+  function runSelfCheck() {
+    var checks = [];
+    function add(name, status, detail) { checks.push({ name: name, status: status, detail: detail }); }
+
+    return RQ.db.put('settings', { key: '_selfcheck', value: 'ok-' + Date.now() })
+      .then(function () { return RQ.db.get('settings', '_selfcheck'); })
+      .then(function (r) {
+        var ok = r && String(r.value).indexOf('ok-') === 0;
+        add('Phone storage: save and read back', ok ? 'pass' : 'fail', ok ? 'Works' : 'Read back did not match');
+        return RQ.db.delete('settings', '_selfcheck');
+      })
+      .catch(function (e) { add('Phone storage: save and read back', 'fail', e.message); })
+      .then(function () { return RQ.chapters.all(); })
+      .then(function (rows) {
+        var by = {};
+        rows.forEach(function (c) { by[c.subject] = (by[c.subject] || 0) + 1; });
+        var expected = 0;
+        RQ.SUBJECTS.forEach(function (s) { RQ.BUILTIN[s].forEach(function (g) { expected += g.items.length; }); });
+        var builtins = rows.filter(function (c) { return !c.isCustom; }).length;
+        add('Chapter list loaded', builtins >= expected ? 'pass' : 'fail',
+          builtins + ' built-in (Physics ' + (by.Physics || 0) + ', Chemistry ' + (by.Chemistry || 0) + ', Maths ' + (by.Maths || 0) + ')');
+      })
+      .catch(function (e) { add('Chapter list loaded', 'fail', e.message); })
+      .then(function () {
+        var s = RQ.settings.get('theme');
+        add('Settings loaded', 'pass', 'Colour ' + s + ', daily goal ' + RQ.settings.get('dailyGoal'));
+        add('Version', 'pass', self.APP_VERSION);
+        add('Works offline', 'warn', 'This single-file version needs internet to open. Notes you saved stay on the phone.');
+        var photoOk = typeof window.createImageBitmap === 'function' && !!document.createElement('canvas').toBlob;
+        add('Photo handling', photoOk ? 'pass' : 'warn', photoOk ? 'Can shrink photos before saving' : 'Photos may be saved at full size');
+        add('Vibration', navigator.vibrate ? 'pass' : 'warn', navigator.vibrate ? 'Supported' : 'Not supported here');
+        var standalone = window.matchMedia && window.matchMedia('(display-mode: standalone)').matches;
+        add('Installed on home screen', standalone ? 'pass' : 'warn', standalone ? 'Yes' : 'Not yet (optional): Chrome menu > Add to Home screen');
+        if (navigator.storage && navigator.storage.persisted) {
+          return navigator.storage.persisted().then(function (p) { add('Data protected from clearing', p ? 'pass' : 'warn', p ? 'Yes' : 'Not yet. Settings > Protect my data'); });
+        }
+      })
+      .then(function () { return checks; });
+  }
+
+  /* ---------- Home ---------- */
+  function renderHome(root) {
+    var resultBox = h('div', { class: 'glass pad', hidden: true });
+    var chapterCount = h('span', { class: 'muted', text: '' });
+    var noteCount = h('span', { class: 'muted', text: '' });
+    RQ.notes.all().then(function (r) { noteCount.textContent = r.length === 1 ? '1 note saved' : r.length + ' notes saved'; }).catch(function () {});
+    RQ.chapters.all().then(function (r) { chapterCount.textContent = r.length + ' chapters'; }).catch(function () {});
+
+    root.append.apply(root, [
+      h('div', { class: 'head' },
+        h('div', { class: 'grow' }, h('h1', { text: 'Revise' }), h('div', { class: 'hint', text: 'Revision Quest - Part 2: Log Notes' })),
+        h('button', { class: 'round-btn', 'aria-label': 'Settings', onclick: function () { location.hash = '#settings'; } }, icon('gear', 22))),
+      RQ.bootError ? h('div', { class: 'glass pad error' }, h('div', { class: 'strong', text: 'Storage problem' }), h('div', { class: 'hint', text: RQ.bootError.message || String(RQ.bootError) })) : null,
+      h('div', { class: 'glass pad' },
+        h('div', { class: 'strong', text: 'Foundation and Log Notes are ready' }),
+        h('p', { class: 'hint', text: 'You can now log notes (typed, pasted or photos) and they are saved on this phone. Questions and revision screens arrive in the next parts.' })),
+      h('button', { class: 'btn', onclick: function () { location.hash = '#lognotes'; } }, h('span', null, icon('pen', 18), ' Log Notes')),
+      h('button', { class: 'glass nav', onclick: function () { location.hash = '#notes'; } },
+        h('span', { class: 'nav-ic' }, icon('notes', 22)), h('span', { class: 'grow left' }, h('span', { class: 'strong', text: 'My notes' }), h('br'), noteCount), icon('chevron', 20)),
+      h('button', { class: 'glass nav', onclick: function () { location.hash = '#chapters'; } },
+        h('span', { class: 'nav-ic' }, icon('book', 22)), h('span', { class: 'grow left' }, h('span', { class: 'strong', text: 'Chapters' }), h('br'), chapterCount), icon('chevron', 20)),
+      h('button', { class: 'glass nav', onclick: function () { location.hash = '#settings'; } },
+        h('span', { class: 'nav-ic' }, icon('gear', 22)), h('span', { class: 'grow left' }, h('span', { class: 'strong', text: 'Settings' }), h('br'), h('span', { class: 'muted', text: 'Colour, daily goal, vibration, exam dates' })), icon('chevron', 20)),
+      h('button', { class: 'btn', onclick: function () {
+        resultBox.hidden = false;
+        resultBox.replaceChildren(h('div', { class: 'muted', text: 'Running checks...' }));
+        runSelfCheck().then(function (list) {
+          var rows = list.map(function (c) {
+            return h('div', { class: 'check ' + c.status },
+              h('span', { class: 'tag', text: c.status === 'pass' ? 'PASS' : (c.status === 'warn' ? 'NOTE' : 'FAIL') }),
+              h('div', null, h('div', { class: 'strong', text: c.name }), h('div', { class: 'hint', text: c.detail })));
+          });
+          resultBox.replaceChildren.apply(resultBox, [h('div', { class: 'strong', text: 'Self-check' })].concat(rows));
+        });
+      } }, h('span', null, icon('pulse', 18), ' Run self-check')),
+      resultBox].filter(Boolean));
+  }
+
+  /* ---------- Screen switching ---------- */
+  var routes = {
+    home: renderHome,
+    settings: function (r) { RQ.screens.settings(r); },
+    chapters: function (r) { RQ.screens.chapters(r); },
+    lognotes: function (r) { RQ.screens.lognotes(r); },
+    saved: function (r, a) { RQ.screens.saved(r, a); },
+    notes: function (r) { RQ.screens.notes(r); },
+    note: function (r, a) { RQ.screens.note(r, a); }
+  };
+  function route() {
+    var parts = (location.hash || '#home').slice(1).split('/');
+    var fn = routes[parts[0]] || renderHome;
+    var root = document.getElementById('app');
+    RQ.freeUrls();
+    document.querySelectorAll('.sheet,.backdrop,.lightbox').forEach(function (el) { el.remove(); });
+    document.body.style.overflow = '';
+    root.replaceChildren();
+    window.scrollTo(0, 0);
+    fn(root, parts.slice(1).join('/'));
+  }
+  window.addEventListener('hashchange', route);
+
+  function boot() {
+    RQ.db.open()
+      .then(function () { return RQ.settings.load(); })
+      .then(function () { return RQ.chapters.seed(); })
+      .catch(function (e) { RQ.bootError = e; })
+      .then(function () {
+        route();
+        setupUpdates();
+        if (navigator.storage && navigator.storage.persist) navigator.storage.persisted().then(function (p) { if (!p) navigator.storage.persist(); }).catch(function () {});
+      });
+  }
+  boot();
+})();
+
+</script>
 </body>
 </html>
